@@ -135,7 +135,10 @@ export const SocialHandoutModal: React.FC<SocialHandoutModalProps> = ({ isOpen, 
                       </p>
                     </div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-amber-400 transition-colors" />
+                  <div className="flex items-center gap-2 pl-2">
+                    <span className="hidden sm:inline-block text-xs font-bold text-[#e69b57] group-hover:underline">Visit Page</span>
+                    <ExternalLink className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                  </div>
                 </a>
               );
             })}

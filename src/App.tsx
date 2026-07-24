@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { PageId, MenuItem } from './types';
+import { PageId, MenuItem, CartItem, DrinkCustomization } from './types';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
 import { DrinkCustomizerModal } from './components/DrinkCustomizerModal';
 import { DrinkQuizModal } from './components/DrinkQuizModal';
 import { SocialHandoutModal } from './components/SocialHandoutModal';
+import { CartDrawer } from './components/CartDrawer';
 import { Toast } from './components/Toast';
 
 import { HomePage } from './pages/HomePage';
@@ -20,9 +21,44 @@ export default function App() {
   const [customizerItem, setCustomizerItem] = useState<MenuItem | null>(null);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isSocialHandoutOpen, setIsSocialHandoutOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [cursorEnabled, setCursorEnabled] = useState(true);
   const [selectedLocationId, setSelectedLocationId] = useState('mlk');
+
+  const handleAddToCart = (item: MenuItem, customization?: DrinkCustomization) => {
+    const newItem: CartItem = {
+      cartItemId: 'cart-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+      item,
+      quantity: 1,
+      customization,
+      pickupLocationId: selectedLocationId
+    };
+    setCartItems(prev => [...prev, newItem]);
+    setToastMessage(`Added "${item.name}" to your coffee order bag!`);
+    setIsCartOpen(true);
+  };
+
+  const handleUpdateQuantity = (cartItemId: string, newQty: number) => {
+    if (newQty <= 0) {
+      handleRemoveItem(cartItemId);
+      return;
+    }
+    setCartItems(prev =>
+      prev.map(item => item.cartItemId === cartItemId ? { ...item, quantity: newQty } : item)
+    );
+  };
+
+  const handleRemoveItem = (cartItemId: string) => {
+    setCartItems(prev => prev.filter(item => item.cartItemId !== cartItemId));
+  };
+
+  const handleClearCart = () => {
+    setCartItems([]);
+  };
+
+  const totalCartCount = cartItems.reduce((acc, ci) => acc + ci.quantity, 0);
 
   return (
     <div className="min-h-screen bg-[#120b08] text-white font-sans selection:bg-[#e69b57] selection:text-stone-950 flex flex-col justify-between relative overflow-hidden">
@@ -45,6 +81,8 @@ export default function App() {
         setCursorEnabled={setCursorEnabled}
         selectedLocationId={selectedLocationId}
         setSelectedLocationId={setSelectedLocationId}
+        cartCount={totalCartCount}
+        onOpenCart={() => setIsCartOpen(true)}
       />
 
       {/* Main Page View Router */}
@@ -93,10 +131,11 @@ export default function App() {
         onOpenSocialHandout={() => setIsSocialHandoutOpen(true)}
       />
 
-      {/* Drink Spotlight Modal */}
+      {/* Drink Spotlight & Order Customizer Modal */}
       <DrinkCustomizerModal
         item={customizerItem}
         onClose={() => setCustomizerItem(null)}
+        onAddToCart={handleAddToCart}
       />
 
       {/* Drink Match Quiz Modal */}
@@ -110,6 +149,18 @@ export default function App() {
       <SocialHandoutModal
         isOpen={isSocialHandoutOpen}
         onClose={() => setIsSocialHandoutOpen(false)}
+      />
+
+      {/* Shopping Bag / Cart Drawer */}
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
+        onClearCart={handleClearCart}
+        selectedLocationId={selectedLocationId}
+        setSelectedLocationId={setSelectedLocationId}
       />
 
       {/* Notification Toast */}

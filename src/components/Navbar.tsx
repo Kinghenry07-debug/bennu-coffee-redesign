@@ -13,7 +13,8 @@ import {
   MousePointer,
   UtensilsCrossed,
   BookOpen,
-  ShoppingBag as MerchIcon
+  ShoppingBag as MerchIcon,
+  ShoppingBag
 } from 'lucide-react';
 import { cafeAudio } from '../utils/audioSynth';
 
@@ -26,6 +27,8 @@ interface NavbarProps {
   setCursorEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   selectedLocationId: string;
   setSelectedLocationId: (id: string) => void;
+  cartCount?: number;
+  onOpenCart?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,7 +39,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   cursorEnabled,
   setCursorEnabled,
   selectedLocationId,
-  setSelectedLocationId
+  setSelectedLocationId,
+  cartCount = 0,
+  onOpenCart
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
@@ -123,6 +128,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Actions & Utilities */}
           <div className="flex items-center gap-2 sm:gap-3">
             
+            {/* Shopping Bag / Cart Drawer Toggle */}
+            {onOpenCart && (
+              <button
+                onClick={onOpenCart}
+                title="View Coffee Order Bag"
+                className="relative p-2.5 rounded-full border border-amber-500/30 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60 transition-all cursor-pointer flex items-center justify-center"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#e69b57] text-[#120b08] text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             {/* Ambient Sound Toggle */}
             <button
               onClick={handleToggleAudio}

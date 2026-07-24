@@ -42,33 +42,36 @@ export const Footer: React.FC<FooterProps> = ({ setCurrentPage, onOpenQuiz, onOp
               Austin’s original 24-hour craft coffee sanctuary. Serving 100% organic fair-trade espresso, signature gourmet literary mochas, local Austin tacos, and local artwork since 2007.
             </p>
 
-            <div className="pt-2 flex items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
               <a 
                 href="https://instagram.com/bennucoffee/" 
                 target="_blank" 
                 rel="noreferrer"
                 title="Bennu Coffee Instagram @bennucoffee"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[#e69b57] hover:bg-[#e69b57] hover:text-[#120b08] transition-all shadow-md hover:scale-105"
+                className="px-3 py-2 rounded-xl bg-gradient-to-r from-pink-600/20 to-purple-600/20 border border-pink-500/40 text-pink-300 hover:bg-pink-600/30 font-semibold text-xs flex items-center gap-2 transition-all shadow-md hover:scale-105"
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-4 h-4 text-pink-400" />
+                <span>Instagram</span>
               </a>
               <a 
                 href="https://facebook.com/BennuCoffeeEast" 
                 target="_blank" 
                 rel="noreferrer"
                 title="Bennu Coffee East Facebook"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[#e69b57] hover:bg-[#e69b57] hover:text-[#120b08] transition-all shadow-md hover:scale-105"
+                className="px-3 py-2 rounded-xl bg-blue-600/20 border border-blue-500/40 text-blue-300 hover:bg-blue-600/30 font-semibold text-xs flex items-center gap-2 transition-all shadow-md hover:scale-105"
               >
-                <Facebook className="w-4 h-4" />
+                <Facebook className="w-4 h-4 text-blue-400" />
+                <span>Facebook</span>
               </a>
               <a 
                 href="https://twitter.com/BennuCoffee" 
                 target="_blank" 
                 rel="noreferrer"
                 title="Bennu Coffee Twitter @BennuCoffee"
-                className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-[#e69b57] hover:bg-[#e69b57] hover:text-[#120b08] transition-all shadow-md hover:scale-105"
+                className="px-3 py-2 rounded-xl bg-sky-600/20 border border-sky-500/40 text-sky-300 hover:bg-sky-600/30 font-semibold text-xs flex items-center gap-2 transition-all shadow-md hover:scale-105"
               >
-                <Twitter className="w-4 h-4" />
+                <Twitter className="w-4 h-4 text-sky-400" />
+                <span>Twitter / X</span>
               </a>
             </div>
           </div>
