@@ -29,6 +29,7 @@ interface NavbarProps {
   setSelectedLocationId: (id: string) => void;
   cartCount?: number;
   onOpenCart?: () => void;
+  onShowToast?: (msg: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -41,7 +42,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   selectedLocationId,
   setSelectedLocationId,
   cartCount = 0,
-  onOpenCart
+  onOpenCart,
+  onShowToast
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAudioActive, setIsAudioActive] = useState(false);
@@ -56,8 +58,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const handleToggleAudio = () => {
-    const active = cafeAudio.toggleAmbience();
+    const active = cafeAudio.toggleAudio();
     setIsAudioActive(active);
+    if (onShowToast) {
+      onShowToast(active ? '🎵 Super Chill Lo-Fi Music & SFX Activated!' : '🔇 All Music & Sounds Muted');
+    }
   };
 
   const handleNavClick = (pageId: PageId) => {
@@ -144,17 +149,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {/* Ambient Sound Toggle */}
+            {/* Super Chill Lo-Fi Background Music Toggle */}
             <button
               onClick={handleToggleAudio}
-              title={isAudioActive ? 'Mute Cafe Ambience' : 'Play Cozy Cafe Ambience (Web Audio)'}
-              className={`p-2.5 rounded-full border transition-all duration-200 cursor-pointer ${
+              title={isAudioActive ? 'Stop Chill Background Music' : 'Play Chill Lo-Fi Background Music'}
+              className={`px-3 py-2 rounded-full border transition-all duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold ${
                 isAudioActive
-                  ? 'bg-[#e69b57] text-[#120b08] border-[#e69b57] animate-pulse shadow-lg shadow-[#e69b57]/30'
+                  ? 'bg-[#e69b57] text-[#120b08] border-[#e69b57] shadow-lg shadow-[#e69b57]/30 font-bold'
                   : 'bg-white/5 text-stone-300 border-white/10 hover:bg-white/10'
               }`}
             >
-              {isAudioActive ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              {isAudioActive ? <Volume2 className="w-4 h-4 text-[#120b08] animate-bounce" /> : <VolumeX className="w-4 h-4 text-stone-400" />}
+              <span className="hidden lg:inline">{isAudioActive ? 'Chill Music ON' : 'Chill Music OFF'}</span>
             </button>
 
             {/* Custom Cursor Toggle (Desktop) */}

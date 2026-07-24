@@ -264,7 +264,6 @@ export const MenuPage: React.FC<MenuPageProps> = ({
               <div className="p-5 pt-0">
                 <button
                   onClick={() => {
-                    cafeAudio.playSteamSipSound();
                     onSelectDrinkToCustomize(item);
                   }}
                   className="w-full bg-[#e69b57]/10 hover:bg-[#e69b57] text-[#e69b57] hover:text-[#120b08] font-bold py-2.5 rounded-full text-xs border border-[#e69b57]/40 hover:border-[#e69b57] transition-all flex items-center justify-center gap-2 cursor-pointer shadow"

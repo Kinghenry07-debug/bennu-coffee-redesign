@@ -1,6 +1,7 @@
 import React from 'react';
 import { MenuItem } from '../types';
 import { X, Coffee, BookOpen, Flame, Snowflake, Waves, Sparkles, MapPin, Zap } from 'lucide-react';
+import { cafeAudio } from '../utils/audioSynth';
 
 interface DrinkCustomizerModalProps {
   item: MenuItem | null;

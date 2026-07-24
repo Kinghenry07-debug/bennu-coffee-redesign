@@ -83,6 +83,7 @@ export default function App() {
         setSelectedLocationId={setSelectedLocationId}
         cartCount={totalCartCount}
         onOpenCart={() => setIsCartOpen(true)}
+        onShowToast={(msg) => setToastMessage(msg)}
       />
 
       {/* Main Page View Router */}
