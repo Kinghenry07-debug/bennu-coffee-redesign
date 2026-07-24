@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bennu Coffee - Austin's Original 24-Hour Craft Coffee House</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bennu: {
+              mint: '#7FBBA8',
+              'mint-dark': '#5fa18e',
+              dark: '#120b08',
+              surface: '#1a110c',
+              card: '#281b14',
+              amber: '#e69b57',
+              gold: '#d97706'
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & ReactDOM UMD -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Standalone for JSX parsing -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #120b08;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #120b08;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #281b14;
+      border-radius: 4px;
+      border: 1px solid rgba(127, 187, 168, 0.2);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7FBBA8;
+    }
+  </style>
+</head>
+<body class="bg-[#120b08] text-stone-100 min-h-screen selection:bg-[#7FBBA8] selection:text-[#120b08]">
+  <div id="root"></div>
+
+  <!-- Single-File Complete React Application -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- DATA STRUCTURES ---
+    const MENU_ITEMS = [
+      {
+        id: 'raven',
+        name: 'The Raven',
+        category: 'signature',
+        description: 'Dark chocolate, double espresso, steamed whole milk, topped with house dark chocolate drizzle & whipped cream.',
+        price: 6.25,
+        rating: 4.9,
+        reviewsCount: 342,
+        popular: true,
+        dietary: ['Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'scarlet-letter',
+        name: 'The Scarlet Letter',
+        category: 'signature',
+        description: 'Gourmet white chocolate & wild raspberry infused into espresso with steamed milk & sweet raspberry swirl.',
+        price: 6.50,
+        rating: 4.8,
+        reviewsCount: 289,
+        popular: true,
+        dietary: ['Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'don-quixote',
+        name: 'The Don Quixote',
+        category: 'signature',
+        description: 'Authentic spiced Mexican chocolate, cayenne warmth, cinnamon, rich espresso & creamy foam.',
+        price: 6.50,
+        rating: 4.9,
+        reviewsCount: 410,
+        popular: true,
+        dietary: ['Spiced', 'Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'frankenstein',
+        name: 'The Frankenstein',
+        category: 'signature',
+        description: 'Decadent white chocolate infused with cool crushed spearmint syrup, espresso & fresh mint sprig.',
+        price: 6.50,
+        rating: 4.7,
+        reviewsCount: 215,
+        popular: false,
+        dietary: ['Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'great-gatsby',
+        name: 'The Great Gatsby',
+        category: 'signature',
+        description: 'Raw local Texas wildflower honey, French vanilla, dash of cinnamon, white chocolate & espresso.',
+        price: 6.75,
+        rating: 4.95,
+        reviewsCount: 520,
+        popular: true,
+        dietary: ['Local Texas Honey'],
+        image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'moby-dick',
+        name: 'Moby Dick',
+        category: 'signature',
+        description: 'Classic rich Dutch cocoa mocha, double espresso, velvet steamed milk & dark cocoa dust.',
+        price: 6.00,
+        rating: 4.8,
+        reviewsCount: 198,
+        popular: false,
+        dietary: ['Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'cold-brew-247',
+        name: 'Bennu 24/7 Cold Brew',
+        category: 'cold-brew',
+        description: 'Slow 18-hour steep of organic Austin roast beans. Smooth, chocolatey notes, zero bitterness.',
+        price: 5.25,
+        rating: 4.9,
+        reviewsCount: 310,
+        popular: true,
+        dietary: ['Vegan', 'Organic', 'Gluten-Free'],
+        image: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'austin-chai',
+        name: 'Austin Organic Chai Latte',
+        category: 'tea',
+        description: 'House-brewed spicing of cardamom, ginger, black tea, sweetened with local honey & oat milk.',
+        price: 5.75,
+        rating: 4.85,
+        reviewsCount: 175,
+        popular: false,
+        dietary: ['Organic', 'Vegetarian'],
+        image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'empanada-beef',
+        name: 'Local Austin Empanadas',
+        category: 'food',
+        description: 'Savory hand-baked empanadas from local Austin kitchen partners. Choose beef, chicken, or vegan black bean.',
+        price: 5.50,
+        rating: 4.7,
+        reviewsCount: 240,
+        popular: true,
+        dietary: ['Local Partner', 'Optionally Vegan'],
+        image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&q=80&w=800'
+      }
+    ];
+
+    const LOCATIONS = [
+      {
+        id: 'mlk',
+        name: 'Bennu East (MLK)',
+        address: '2001 E MLK Jr Blvd, Austin, TX 78702',
+        hours: '24 Hours A Day, 7 Days A Week',
+        phone: '(512) 478-4700',
+        features: ['24/7 Open', 'Patio Seating', 'Free Fiber Wi-Fi', 'Local Art Gallery', 'Drive-Thru / Pickup Window'],
+        description: 'The flagship original Bennu location on East MLK. Iconic late-night study hub for UT students, creatives, and night owls.',
+        image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=800'
+      },
+      {
+        id: 'congress',
+        name: 'Bennu South (S Congress)',
+        address: '515 S Congress Ave, Austin, TX 78704',
+        hours: '24 Hours A Day, 7 Days A Week',
+        phone: '(512) 445-0200',
+        features: ['24/7 Open', 'Shaded Outdoor Deck', 'High-Speed Wi-Fi', 'Local Pastries', 'Pet Friendly'],
+        description: 'Located in the heart of South Congress. Cozy vintage velvet couches, abundant outlets, and round-the-clock coffee.',
+        image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800'
+      }
+    ];
+
+    // --- BENNU LOGO COMPONENT ---
+    const BennuLogo = ({ size = 'md', showText = true }) => {
+      const sizeClasses = {
+        sm: 'w-10 h-10',
+        md: 'w-14 h-14',
+        lg: 'w-20 h-20',
+        xl: 'w-28 h-28'
+      }[size];
+
+      return (
+        <div className="flex items-center gap-3">
+          <div className={`relative ${sizeClasses} flex-shrink-0 group cursor-pointer`}>
+            <div className="absolute inset-0 bg-[#7FBBA8] rounded-full blur-md opacity-25 group-hover:opacity-45 transition-opacity" />
+            <svg
+              viewBox="0 0 220 220"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full h-full relative z-10 filter drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+            >
+              {/* Main Seafoam Circle Base */}
+              <circle cx="102" cy="110" r="92" fill="#7FBBA8" />
+
+              {/* Right Handle (White Outline) */}
+              <path
+                d="M 188 94 C 204 94 204 126 188 126"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+
+              {/* Outer Thin White Ring */}
+              <circle cx="102" cy="110" r="88" stroke="#ffffff" strokeWidth="2.5" fill="none" />
+              <circle cx="102" cy="110" r="82" stroke="#ffffff" strokeWidth="2" fill="none" />
+
+              {/* Inner Solid White Circle */}
+              <circle cx="102" cy="110" r="62" fill="#ffffff" />
+
+              {/* BENNU Condensed Text */}
+              <text
+                x="102"
+                y="102"
+                textAnchor="middle"
+                fill="#7FBBA8"
+                fontSize="38"
+                fontWeight="900"
+                fontFamily="'Arial Narrow', 'Trebuchet MS', 'Impact', sans-serif"
+                letterSpacing="2"
+              >
+                BENNU
+              </text>
+
+              {/* Double Parallel Seafoam Lines */}
+              <line x1="62" y1="113" x2="142" y2="113" stroke="#7FBBA8" strokeWidth="2" />
+              <line x1="62" y1="118" x2="142" y2="118" stroke="#7FBBA8" strokeWidth="2" />
+
+              {/* COFFEE Text */}
+              <text
+                x="102"
+                y="136"
+                textAnchor="middle"
+                fill="#7FBBA8"
+                fontSize="15"
+                fontWeight="700"
+                fontFamily="'Arial', 'Helvetica', sans-serif"
+                letterSpacing="5"
+              >
+                COFFEE
+              </text>
+            </svg>
+          </div>
+
+          {showText && (
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 leading-none">
+                <span className="font-serif font-extrabold tracking-tight text-white text-2xl">
+                  BENNU
+                </span>
+                <span className="text-[10px] font-sans tracking-wider uppercase bg-[#7FBBA8]/20 text-[#7FBBA8] px-2 py-0.5 rounded-full border border-[#7FBBA8]/40 font-bold">
+                  24/7 AUSTIN
+                </span>
+              </div>
+              <p className="text-[10px] text-stone-300 tracking-wider uppercase font-medium mt-1">
+                24 Hours A Day • 7 Days A Week
+              </p>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // --- MAIN APP COMPONENT ---
+    const App = () => {
+      const [currentPage, setCurrentPage] = useState('home');
+      const [cart, setCart] = useState([]);
+      const [isCartOpen, setIsCartOpen] = useState(false);
+      const [isQuizOpen, setIsQuizOpen] = useState(false);
+      const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+      const [customizerItem, setCustomizerItem] = useState(null);
+      const [toast, setToast] = useState(null);
+
+      const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(null), 3000);
+      };
+
+      const addToCart = (item, options = {}) => {
+        setCart(prev => {
+          const existingIndex = prev.findIndex(i => i.id === item.id && JSON.stringify(i.options) === JSON.stringify(options));
+          if (existingIndex > -1) {
+            const updated = [...prev];
+            updated[existingIndex].quantity += 1;
+            return updated;
+          }
+          return [...prev, { ...item, quantity: 1, options, cartId: Date.now() }];
+        });
+        showToast(`Added ${item.name} to cart!`);
+      };
+
+      const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [currentPage, isCartOpen, isQuizOpen, isSocialModalOpen, customizerItem]);
+
+      return (
+        <div className="min-h-screen flex flex-col bg-[#120b08] text-stone-100">
+          {/* Header Banner */}
+          <div className="bg-gradient-to-r from-[#281b14] via-[#1a110c] to-[#281b14] text-stone-200 text-xs py-2 px-4 text-center font-medium border-b border-white/10 flex items-center justify-center gap-4 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              ALWAYS OPEN 24/7
+            </span>
+            <span>Austin's Original 24-Hour Craft Coffee House on MLK Blvd & S Congress</span>
+            <button
+              onClick={() => setIsQuizOpen(true)}
+              className="text-[#e69b57] font-bold hover:underline flex items-center gap-1"
+            >
+              ✨ Take Mocha Match Quiz
+            </button>
+            <button
+              onClick={() => setIsSocialModalOpen(true)}
+              className="text-[#7FBBA8] font-bold hover:underline border-l border-white/20 pl-3 flex items-center gap-1"
+            >
+              📱 Official Social Handout
+            </button>
+          </div>
+
+          {/* Navigation Navbar */}
+          <nav className="sticky top-0 z-40 backdrop-blur-xl bg-[#120b08]/90 border-b border-white/10 shadow-2xl px-4 lg:px-8 py-3">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <div onClick={() => setCurrentPage('home')} className="cursor-pointer">
+                <BennuLogo size="md" />
+              </div>
+
+              {/* Page Links */}
+              <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-stone-300">
+                {[
+                  { id: 'home', label: 'Home' },
+                  { id: 'menu', label: 'Signature Menu' },
+                  { id: 'locations', label: '24/7 Locations' },
+                  { id: 'story', label: 'Our Story' },
+                  { id: 'catering', label: 'Catering' },
+                  { id: 'merch', label: 'Merch' }
+                ].map(page => (
+                  <button
+                    key={page.id}
+                    onClick={() => setCurrentPage(page.id)}
+                    className={`transition-colors py-1 ${currentPage === page.id ? 'text-[#7FBBA8] border-b-2 border-[#7FBBA8]' : 'hover:text-white'}`}
+                  >
+                    {page.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Cart Button */}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsCartOpen(true)}
+                  className="relative p-2.5 rounded-full bg-[#281b14] border border-white/10 text-stone-200 hover:text-[#7FBBA8] transition-all hover:scale-105"
+                >
+                  <i data-lucide="shopping-bag" className="w-5 h-5"></i>
+                  {totalCartItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#7FBBA8] text-[#120b08] font-black text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      {totalCartItems}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setCurrentPage('menu')}
+                  className="hidden sm:block px-5 py-2.5 rounded-full bg-[#7FBBA8] text-[#120b08] font-black text-xs tracking-wider uppercase hover:bg-[#6fa896] transition-all shadow-lg"
+                >
+                  Order 24/7 Online
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          {/* PAGE CONTENT ROUTER */}
+          <main className="flex-1">
+            {currentPage === 'home' && (
+              <div className="space-y-16 pb-20">
+                {/* Hero Section */}
+                <section className="relative py-24 px-4 overflow-hidden bg-gradient-to-b from-[#1a110c] to-[#120b08]">
+                  <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=1600')] bg-cover bg-center" />
+                  <div className="relative max-w-5xl mx-auto text-center space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#7FBBA8]/10 text-[#7FBBA8] border border-[#7FBBA8]/30 text-xs font-bold uppercase tracking-widest">
+                      ☕ AUSTIN'S 24-HOUR COFFEE SANCTUARY
+                    </div>
+                    <h1 className="font-serif text-5xl sm:text-7xl font-black text-amber-50 leading-tight">
+                      Crafted for the Night Owls & Early Risers
+                    </h1>
+                    <p className="text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
+                      Serving Austin signature gourmet mochas, single-origin espressos, organic cold brew, and local tacos 24 hours a day, 7 days a week.
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+                      <button
+                        onClick={() => setCurrentPage('menu')}
+                        className="px-8 py-4 rounded-full bg-[#7FBBA8] text-[#120b08] font-black text-sm uppercase tracking-wider hover:bg-[#6fa896] transition-all shadow-xl hover:scale-105"
+                      >
+                        Explore Signature Mochas
+                      </button>
+                      <button
+                        onClick={() => setCurrentPage('locations')}
+                        className="px-8 py-4 rounded-full bg-white/10 text-white font-bold text-sm border border-white/20 hover:bg-white/20 transition-all"
+                      >
+                        Find 24/7 Location
+                      </button>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Signature Mocha Grid */}
+                <section className="max-w-7xl mx-auto px-4">
+                  <div className="flex items-center justify-between mb-8">
+                    <div>
+                      <h2 className="font-serif text-3xl font-bold text-amber-100">Gourmet Signature Mochas</h2>
+                      <p className="text-stone-400 text-sm">Hand-crafted literary-inspired mocha creations</p>
+                    </div>
+                    <button onClick={() => setCurrentPage('menu')} className="text-[#7FBBA8] text-sm font-bold hover:underline">
+                      View All Drinks →
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {MENU_ITEMS.filter(i => i.category === 'signature').slice(0, 3).map(item => (
+                      <div key={item.id} className="bg-[#1a110c] border border-white/10 rounded-2xl overflow-hidden hover:border-[#7FBBA8]/50 transition-all group flex flex-col">
+                        <div className="h-48 relative overflow-hidden">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <span className="absolute top-3 right-3 px-3 py-1 bg-[#120b08]/80 backdrop-blur-md text-[#7FBBA8] text-xs font-bold rounded-full border border-[#7FBBA8]/30">
+                            ${item.price.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="p-5 flex-1 flex flex-col justify-between">
+                          <div>
+                            <h3 className="font-serif text-xl font-bold text-amber-100 mb-2">{item.name}</h3>
+                            <p className="text-stone-300 text-xs leading-relaxed mb-4">{item.description}</p>
+                          </div>
+                          <button
+                            onClick={() => setCustomizerItem(item)}
+                            className="w-full py-2.5 rounded-xl bg-[#281b14] border border-white/10 text-[#7FBBA8] font-bold text-xs hover:bg-[#7FBBA8] hover:text-[#120b08] transition-all"
+                          >
+                            Customize & Order
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {currentPage === 'menu' && (
+              <section className="max-w-7xl mx-auto px-4 py-12 space-y-8">
+                <div className="text-center max-w-2xl mx-auto space-y-3">
+                  <h1 className="font-serif text-4xl font-bold text-amber-50">Bennu 24/7 Full Menu</h1>
+                  <p className="text-stone-300 text-sm">Made fresh to order at both our East MLK & South Congress coffee sanctuaries.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {MENU_ITEMS.map(item => (
+                    <div key={item.id} className="bg-[#1a110c] border border-white/10 rounded-2xl p-5 space-y-4 hover:border-[#7FBBA8]/40 transition-all flex flex-col justify-between">
+                      <div className="flex gap-4">
+                        <img src={item.image} alt={item.name} className="w-20 h-20 rounded-xl object-cover" />
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-serif font-bold text-amber-100">{item.name}</h3>
+                          </div>
+                          <span className="text-[#7FBBA8] font-black text-sm">${item.price.toFixed(2)}</span>
+                          <p className="text-xs text-stone-300 mt-1 line-clamp-2">{item.description}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setCustomizerItem(item)}
+                        className="w-full py-2 rounded-xl bg-[#7FBBA8] text-[#120b08] font-bold text-xs hover:bg-[#6fa896] transition-all"
+                      >
+                        Customize Drink
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {currentPage === 'locations' && (
+              <section className="max-w-7xl mx-auto px-4 py-12 space-y-8">
+                <div className="text-center max-w-2xl mx-auto">
+                  <h1 className="font-serif text-4xl font-bold text-amber-50 mb-2">Our Austin Locations</h1>
+                  <p className="text-stone-300 text-sm">Always open 24 hours a day, 365 days a year.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {LOCATIONS.map(loc => (
+                    <div key={loc.id} className="bg-[#1a110c] border border-white/10 rounded-3xl overflow-hidden space-y-4">
+                      <img src={loc.image} alt={loc.name} className="w-full h-56 object-cover" />
+                      <div className="p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h2 className="font-serif text-2xl font-bold text-amber-100">{loc.name}</h2>
+                          <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-full border border-emerald-500/30">
+                            24/7 OPEN
+                          </span>
+                        </div>
+                        <p className="text-sm text-stone-300">{loc.description}</p>
+                        <div className="text-xs text-stone-400 space-y-1">
+                          <p>📍 {loc.address}</p>
+                          <p>📞 {loc.phone}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {loc.features.map(f => (
+                            <span key={f} className="text-[11px] bg-white/5 text-amber-200/90 px-2.5 py-1 rounded-full border border-white/10">
+                              {f}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {currentPage === 'story' && (
+              <section className="max-w-4xl mx-auto px-4 py-12 space-y-8">
+                <div className="text-center space-y-3">
+                  <BennuLogo size="xl" showText={false} />
+                  <h1 className="font-serif text-4xl font-bold text-amber-50">Our Story</h1>
+                  <p className="text-stone-300 text-sm">Serving Austin since 2007</p>
+                </div>
+                <div className="bg-[#1a110c] p-8 rounded-3xl border border-white/10 text-stone-300 space-y-4 text-sm leading-relaxed">
+                  <p>
+                    Founded in 2007 by Steve and Stephanie Myers, Bennu Coffee was created with a clear mission: to give Austin a true 24-hour community coffee house where anyone—students, musicians, night-shift nurses, writers, and tech workers—could find sanctuary at any hour of the day or night.
+                  </p>
+                  <p>
+                    Named after the ancient Egyptian bird of rebirth and creation, Bennu represents endless energy and local community spirit. Our signature gourmet mochas are each named after timeless literary classics, crafted with high-grade espresso and premium chocolate.
+                  </p>
+                </div>
+              </section>
+            )}
+
+            {currentPage === 'catering' && (
+              <section className="max-w-3xl mx-auto px-4 py-12 space-y-6">
+                <h1 className="font-serif text-4xl font-bold text-center text-amber-50">Austin Coffee Catering</h1>
+                <p className="text-center text-stone-300 text-sm">Bring Bennu signature mochas and local pastries to your office, wedding, or event.</p>
+                <div className="bg-[#1a110c] p-6 rounded-3xl border border-white/10 space-y-4">
+                  <input type="text" placeholder="Your Name" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white" />
+                  <input type="email" placeholder="Email Address" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white" />
+                  <textarea placeholder="Event Details & Date" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-xs text-white h-28" />
+                  <button onClick={() => showToast('Catering request sent!')} className="w-full py-3 rounded-xl bg-[#7FBBA8] text-[#120b08] font-bold text-xs uppercase tracking-wider">
+                    Submit Catering Request
+                  </button>
+                </div>
+              </section>
+            )}
+
+            {currentPage === 'merch' && (
+              <section className="max-w-5xl mx-auto px-4 py-12 space-y-6">
+                <h1 className="font-serif text-4xl font-bold text-center text-amber-50">Bennu Official Merch</h1>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {['Signature Bennu Mug', '24/7 Austin Hoodie', 'Whole Bean Coffee (12oz)'].map((name, i) => (
+                    <div key={i} className="bg-[#1a110c] p-6 rounded-2xl border border-white/10 text-center space-y-3">
+                      <div className="w-20 h-20 mx-auto rounded-full bg-[#7FBBA8]/20 flex items-center justify-center text-[#7FBBA8] font-bold text-2xl">
+                        ☕
+                      </div>
+                      <h3 className="font-serif font-bold text-amber-100">{name}</h3>
+                      <p className="text-[#7FBBA8] font-bold text-sm">$22.00</p>
+                      <button onClick={() => showToast(`Added ${name} to cart!`)} className="w-full py-2 rounded-xl bg-white/10 text-xs font-bold hover:bg-white/20">
+                        Add to Cart
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </main>
+
+          {/* FOOTER */}
+          <footer className="bg-[#120b08] border-t border-white/10 py-12 px-4 text-xs text-stone-400">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+              <BennuLogo size="sm" />
+              <div className="text-center md:text-left">
+                <p>© 2026 Bennu Coffee Austin. Open 24/7/365.</p>
+                <p className="text-stone-500 mt-1">2001 E MLK Jr Blvd • 515 S Congress Ave</p>
+              </div>
+              <button
+                onClick={() => setIsSocialModalOpen(true)}
+                className="px-4 py-2 rounded-full bg-white/10 text-amber-300 font-bold hover:bg-white/20"
+              >
+                📱 Social Media Handout
+              </button>
+            </div>
+          </footer>
+
+          {/* SOCIAL HANDOUT MODAL */}
+          {isSocialModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <div className="bg-[#1a110c] border border-[#7FBBA8]/30 rounded-3xl p-6 max-w-lg w-full space-y-4">
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                  <h3 className="font-serif text-lg font-bold text-amber-100">Bennu Coffee Official Handout</h3>
+                  <button onClick={() => setIsSocialModalOpen(false)} className="text-stone-400 font-bold">✕</button>
+                </div>
+                <div className="space-y-3 text-xs text-stone-300">
+                  <p><strong>Instagram:</strong> @bennucoffee</p>
+                  <p><strong>Facebook:</strong> Bennu Coffee East</p>
+                  <p><strong>Twitter / X:</strong> @BennuCoffee</p>
+                  <p><strong>Locations:</strong> 2001 E MLK Jr Blvd / 515 S Congress Ave</p>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText('Bennu Coffee Austin - 24/7 Craft Coffee & Signature Mochas. Instagram: @bennucoffee');
+                    showToast('Copied handout text!');
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-[#7FBBA8] text-[#120b08] font-bold text-xs"
+                >
+                  Copy Handout Details
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* DRINK CUSTOMIZER MODAL */}
+          {customizerItem && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <div className="bg-[#1a110c] border border-white/10 rounded-3xl p-6 max-w-md w-full space-y-4">
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                  <h3 className="font-serif text-xl font-bold text-amber-100">{customizerItem.name}</h3>
+                  <button onClick={() => setCustomizerItem(null)} className="text-stone-400 font-bold">✕</button>
+                </div>
+                <p className="text-xs text-stone-300">{customizerItem.description}</p>
+                <div className="space-y-2 text-xs">
+                  <p className="font-bold text-amber-300">Milk Option:</p>
+                  <div className="flex gap-2">
+                    {['Whole Milk', 'Oat Milk (+ $0.75)', 'Almond Milk (+ $0.75)', 'Soy Milk (+ $0.75)'].map((m, idx) => (
+                      <span key={idx} className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg cursor-pointer hover:bg-[#7FBBA8]/20">
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    addToCart(customizerItem);
+                    setCustomizerItem(null);
+                  }}
+                  className="w-full py-3 rounded-xl bg-[#7FBBA8] text-[#120b08] font-bold text-xs uppercase tracking-wider"
+                >
+                  Add to Order - ${customizerItem.price.toFixed(2)}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* MOCHA MATCH QUIZ MODAL */}
+          {isQuizOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <div className="bg-[#1a110c] border border-[#7FBBA8]/30 rounded-3xl p-6 max-w-md w-full space-y-4 text-center">
+                <h3 className="font-serif text-2xl font-bold text-amber-100">Mocha Match Quiz</h3>
+                <p className="text-xs text-stone-300">Which flavor profile describes your current mood?</p>
+                <div className="space-y-2">
+                  {[
+                    { text: 'Dark & Decadent Chocolate', match: MENU_ITEMS[0] },
+                    { text: 'Sweet White Chocolate & Fruity Berry', match: MENU_ITEMS[1] },
+                    { text: 'Warm Spicy Cinnamon & Cayenne', match: MENU_ITEMS[2] }
+                  ].map((q, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        setIsQuizOpen(false);
+                        setCustomizerItem(q.match);
+                      }}
+                      className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-amber-200 font-bold hover:bg-[#7FBBA8]/20 transition-all text-left"
+                    >
+                      {q.text}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setIsQuizOpen(false)} className="text-xs text-stone-400 underline">Close Quiz</button>
+              </div>
+            </div>
+          )}
+
+          {/* SHOPPING CART DRAWER */}
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
+              <div className="w-full max-w-md bg-[#120b08] border-l border-white/10 p-6 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                    <h3 className="font-serif text-xl font-bold text-amber-100">Your 24/7 Order</h3>
+                    <button onClick={() => setIsCartOpen(false)} className="text-stone-400 font-bold">✕</button>
+                  </div>
+                  {cart.length === 0 ? (
+                    <p className="text-stone-400 text-xs text-center py-12">Your cart is currently empty.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {cart.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-[#1a110c] border border-white/5 text-xs">
+                          <div>
+                            <p className="font-bold text-white">{item.name}</p>
+                            <p className="text-stone-400">Qty: {item.quantity}</p>
+                          </div>
+                          <p className="font-bold text-[#7FBBA8]">${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {cart.length > 0 && (
+                  <div className="space-y-3 pt-4 border-t border-white/10">
+                    <div className="flex justify-between text-sm font-bold">
+                      <span>Total:</span>
+                      <span className="text-[#7FBBA8]">${subtotal.toFixed(2)}</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setCart([]);
+                        setIsCartOpen(false);
+                        showToast('Order submitted! Thank you for ordering from Bennu Coffee.');
+                      }}
+                      className="w-full py-3.5 rounded-xl bg-[#7FBBA8] text-[#120b08] font-black text-xs uppercase tracking-wider"
+                    >
+                      Checkout Now
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TOAST NOTIFICATION */}
+          {toast && (
+            <div className="fixed bottom-6 right-6 z-50 bg-[#7FBBA8] text-[#120b08] font-bold text-xs px-5 py-3 rounded-2xl shadow-2xl animate-bounce">
+              {toast}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

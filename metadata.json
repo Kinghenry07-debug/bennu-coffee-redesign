@@ -1,0 +1,6 @@
+{
+  "name": "Bennu Coffee - Austin 24/7 Craft Coffee",
+  "description": "Modern interactive website redesign for Bennu Coffee in Austin, TX featuring full signature mocha menu, interactive location maps, Our Story with video embed, drink customizer quiz, local catering & online ordering preview.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
