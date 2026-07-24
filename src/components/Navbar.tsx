@@ -57,12 +57,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'merch', label: 'Beans & Merch', icon: <MerchIcon className="w-4 h-4" /> },
   ];
 
-  const handleToggleAudio = () => {
-    const active = cafeAudio.toggleAudio();
+  const handleToggleAudio = async () => {
+    const active = await cafeAudio.toggleAudio();
     setIsAudioActive(active);
-    if (onShowToast) {
-      onShowToast(active ? '🎵 Super Chill Lo-Fi Music & SFX Activated!' : '🔇 All Music & Sounds Muted');
-    }
   };
 
   const handleNavClick = (pageId: PageId) => {
